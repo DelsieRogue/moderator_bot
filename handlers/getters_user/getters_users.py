@@ -5,7 +5,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMar
 
 from common.common import ROLE, get_buttons_for_role
 from config.init import dp, bot
-from data_base.scripts import get_users_from_db
+from data_base.scripts import get_users_by_role
 from filters.handler_filter import SuperAdminFilter, AdminFilter, SuperAdminAndAdminFilter
 
 
@@ -26,25 +26,25 @@ async def get_user_list_for_admin(message: types.Message):
 @dp.message_handler(SuperAdminFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE), Text("BOSSES"))
 async def get_superadmins(message: types.Message):
     await bot.send_message(message.from_user.id, "Список боссов",
-                           reply_markup=await get_inline_buttons(["SUPER_ADMIN"]))
+                           reply_markup=await get_inline_buttons("SUPER_ADMIN"))
 
 
 @dp.message_handler(SuperAdminAndAdminFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE), Text("ADMINS"))
 async def get_admins(message: types.Message):
     await bot.send_message(message.from_user.id, "Список админов",
-                           reply_markup=await get_inline_buttons(["ADMIN"]))
+                           reply_markup=await get_inline_buttons("ADMIN"))
 
 
 @dp.message_handler(SuperAdminAndAdminFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE), Text("USERS"))
 async def get_users(message: types.Message):
     await bot.send_message(message.from_user.id, "Список клиентов",
-                           reply_markup=await get_inline_buttons(["USER"]))
+                           reply_markup=await get_inline_buttons("USER"))
 
 
 @dp.message_handler(SuperAdminAndAdminFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE), Text("NO USERS"))
 async def get_ex_users(message: types.Message):
     await bot.send_message(message.from_user.id, "Список не клиентов",
-                           reply_markup=await get_inline_buttons(["NO_USER"]))
+                           reply_markup=await get_inline_buttons("NO_USER"))
 
 
 getters_users_superadmins_button_list = [
@@ -63,10 +63,14 @@ admins_buttons = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)\
     .add(*get_buttons_for_role(ROLE.ADMIN, getters_users_superadmins_button_list))
 
 
-async def get_inline_buttons(roles):
-    user_list = get_users_from_db(roles)
-    inline_markup = InlineKeyboardMarkup(row_width=2)
+async def get_inline_buttons(role: str):
+    user_list = get_users_by_role(role)
+    inline_markup = InlineKeyboardMarkup()
     for user in user_list:
-        inline_markup.add(InlineKeyboardButton(user[1] if user[1] else "FOREVER", callback_data=user[0]),
-                          InlineKeyboardButton(user[0], url="https://t.me/" + user[0]))
+        list_inline_b = [InlineKeyboardButton(text=user[0], callback_data='1'),
+                         InlineKeyboardButton(text=user[2], url="https://t.me/" + user[2])]
+        if user[1]:
+            list_inline_b.insert(1, InlineKeyboardButton(text=user[1],
+                                                         url="https://t.me/" + user[1]))
+        inline_markup.add(*list_inline_b)
     return inline_markup
