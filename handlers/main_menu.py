@@ -21,7 +21,7 @@ async def start_for_super_admin(message: types.Message):
 # ---------------------------------ADMIN-----------------------------------------
 
 @dp.message_handler(AdminFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE),
-                    text=['/start', 'Главное меню'])
+                    text=['/start', 'Главное меню', 'Обновить роль'])
 async def start_for_admin(message: types.Message):
     await bot.send_message(message.from_user.id, text="Главное меню",
                            reply_markup=admins_buttons)
@@ -30,7 +30,7 @@ async def start_for_admin(message: types.Message):
 # ---------------------------------USER-----------------------------------------
 
 @dp.message_handler(UserFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE),
-                    text=['/start', 'Главное меню'])
+                    text=['/start', 'Главное меню', 'Обновить роль'])
 async def start_for_user(message: types.Message):
     await bot.send_message(message.from_user.id, text="Главное меню",
                            reply_markup=user_buttons)
@@ -39,7 +39,7 @@ async def start_for_user(message: types.Message):
 # ---------------------------------NO_USER-----------------------------------------
 
 @dp.message_handler(NoUserFilter(), filters.ChatTypeFilter(types.ChatType.PRIVATE),
-                    text=['/start', 'Главное меню'])
+                    text=['/start', 'Главное меню', 'Обновить роль'])
 async def start_for_no_user(message: types.Message):
     await bot.send_message(message.from_user.id, text="Главное меню",
                            reply_markup=no_user_buttons)
@@ -57,7 +57,8 @@ main_menu_admins_button_list = [
     [[ROLE.USER], KeyboardButton(text="Продлить подписку")],
     [[ROLE.USER], KeyboardButton(text="Дата окончания текущей подписки")],
     [[ROLE.NO_USER], KeyboardButton(text="Купить подписку")],
-    [[ROLE.NO_USER], KeyboardButton(text="Активировать подписку")]
+    [[ROLE.NO_USER], KeyboardButton(text="Активировать подписку")],
+    [[ROLE.NO_USER.ADMIN, ROLE.USER, ROLE.NO_USER], KeyboardButton(text="Обновить роль")]
 ]
 
 super_admins_buttons = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True) \
