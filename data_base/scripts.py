@@ -1,10 +1,11 @@
 import sqlite3
+from datetime import datetime as dt
 
 conn = sqlite3.connect("data_base/bot.db")
 cur = conn.cursor()
 
 
-def get_role_name(user_id: int):
+def get_role_name_by_user_id(user_id: int):
     return cur.execute(f"""
     SELECT r.role_name FROM users u 
     LEFT JOIN roles r ON u.role_id=r.role_id
@@ -46,5 +47,40 @@ def add_user_to_table_users(user_id: int,
     VALUES ({user_id}, 
         "{username}", 
         "{fn}", "{ln}",
-         (SELECT role_id FROM roles WHERE role_name="{role_name}"));""")
+         (SELECT role_id FROM roles WHERE role_name='{role_name}'));""")
     conn.commit()
+
+
+def add_order(user_id: int, price: float) -> int:
+    try:
+        cur.execute(f"""
+        INSERT INTO orders(user_id, price)
+        VALUES ({user_id}, {price});""")
+        cur.execute('SELECT order_id from orders ORDER BY order_id DESC LIMIT 1')
+        conn.commit()
+        return cur.fetchone()
+    except Exception as ex:
+        print(f"[{dt.now(). strftime('%d.%m.%Y %H:%M:%S')}] | ERROR | add_order | EXCEPTION: {ex}")
+        return -1
+
+
+def add_inactive_sub(order_id: int, usernames: dict):
+    try:
+        cur.execute(f"""
+        INSERT INTO inactive_subscribes (order_id, username_1, username_2, username_3)
+        VALUES ({order_id}, 
+            {"'" + usernames.get(1) + "'" if usernames.get(1) else 'NULL'}, 
+            {"'" + usernames.get(2) + "'" if usernames.get(2) else 'NULL'},
+            {"'" + usernames.get(3) + "'" if usernames.get(3) else 'NULL'})""")
+        conn.commit()
+    except Exception as ex:
+        print(f"[{dt.now().strftime('%d.%m.%Y %H:%M:%S')}] | ERROR | add_inactive_sub | EXCEPTION: {ex}")
+
+
+def add_active_sub(order_id: int, user_id: int):
+    try:
+        cur.execute(f"""
+            1""")
+    except Exception as ex:
+        print(f"[{dt.now().strftime('%d.%m.%Y %H:%M:%S')}] | ERROR | add_active_sub | EXCEPTION: {ex}")
+

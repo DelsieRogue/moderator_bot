@@ -2,13 +2,13 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import BoundFilter
 
 from common.common import ROLE
-from data_base.scripts import get_role_name, add_user_to_table_users
+from data_base.scripts import get_role_name_by_user_id, add_user_to_table_users
 
 clean_chat_trigger = True
 
 
 def get_role_or_create_user(message: types.Message) -> ROLE:
-    role = get_role_name(message.from_user.id)
+    role = get_role_name_by_user_id(message.from_user.id)
     if not role:
         add_user_to_table_users(message.from_user.id, message.from_user.username, ROLE.NO_USER.name,
                                 message.from_user.first_name, message.from_user.last_name)
