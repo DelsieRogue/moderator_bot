@@ -51,11 +51,11 @@ def add_user_to_table_users(user_id: int,
     conn.commit()
 
 
-def add_order(user_id: int, price: float) -> int:
+def add_order(user_id: int, price: float, count: int) -> int:
     try:
         cur.execute(f"""
-        INSERT INTO orders(user_id, price)
-        VALUES ({user_id}, {price});""")
+        INSERT INTO orders(user_id, price, count_channels)
+        VALUES ({user_id}, {price}, {count});""")
         cur.execute('SELECT order_id from orders ORDER BY order_id DESC LIMIT 1')
         conn.commit()
         return cur.fetchone()
@@ -84,3 +84,9 @@ def add_active_sub(order_id: int, user_id: int):
     except Exception as ex:
         print(f"[{dt.now().strftime('%d.%m.%Y %H:%M:%S')}] | ERROR | add_active_sub | EXCEPTION: {ex}")
 
+
+def get_username_by_user_id(user_id: int):
+    return cur.execute(f"""
+        SELECT u.username FROM users u 
+        WHERE u.user_id={user_id}""") \
+        .fetchone()[0]

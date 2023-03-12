@@ -7,6 +7,7 @@ COEF = 1.2
 CARD_NUMBER = "4302232312344321"
 CARD_BANK = "СБЕРБАНК"
 CARD_OWNER = "Ильдан М."
+USER_ID = 478086330
 
 
 class ROLE(Enum):

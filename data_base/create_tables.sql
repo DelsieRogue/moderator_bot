@@ -29,26 +29,44 @@ create table orders(
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-drop table if exists inactive_subscribes;
-create table inactive_subscribes(
+drop table if exists publics;
+CREATE TABLE publics (
+  public_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name_app TEXT NOT NULL,
+  name_public TEXT NOT NULL,
+  ref_public TEXT NOT NULL,
+  n_subsribers INTEGER NOT NULL CHECK (n_subsribers > 0),
+  n_views INTEGER NOT NULL CHECK (n_views > 0),
+  cost FLOAT NOT NULL CHECK (cost >= 0),
+  contact TEXT NOT NULL
+);
+
+drop table inactive_subscribes;
+CREATE TABLE inactive_subscribes(
   sub_id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id INTEGER NOT NULL,
-  username TEXT NOT NULL,
+  username_1 TEXT NOT NULL,
+  username_2 TEXT,
+  username_3 TEXT,
+  public_id INTEGER NOT NULL,
   FOREIGN KEY (order_id) REFERENCES orders(order_id)
+  FOREIGN KEY (public_id) REFERENCES publics(public_id)
 );
 
 drop table if exists active_subscribes;
-create table active_subscribes(
+CREATE TABLE active_subscribes(
   sub_id INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id INTEGER NOT NULL,
   user_id_1 INTEGER NOT NULL,
   user_id_2 INTEGER,
   user_id_3 INTEGER,
   counter_msg SMALLINT NOT NULL DEFAULT 3,
+  public_id INTEGER NOT NULL,
   begin_date datetime NOT NULL DEFAULT (datetime('now', 'localtime')),
   end_date datetime NOT NULL DEFAULT (datetime('now', 'localtime', '+1 month')),
   FOREIGN KEY (order_id) REFERENCES orders(order_id)
   FOREIGN KEY (user_id_1) REFERENCES users(user_id)
   FOREIGN KEY (user_id_2) REFERENCES users(user_id)
   FOREIGN KEY (user_id_3) REFERENCES users(user_id)
-)
+  FOREIGN KEY (public_id) REFERENCES publics(public_id)
+);
